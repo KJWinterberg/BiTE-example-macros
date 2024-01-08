@@ -1,0 +1,62 @@
+Tcellnumber = 0;
+origin=getDirectory("Please choose the directory of your images");
+filelist = getFileList(origin); 
+
+for (i = 0; i < lengthOf(filelist); i++) { 
+  open(origin + File.separator + filelist[i]);
+	nameprocessedvid=getTitle();
+	run("Deinterleave", "how=3 keep");
+		for (c=0; c<2; c++){
+			d=c+1;
+			selectWindow(nameprocessedvid+" #"+d);
+			run("In [+]");
+			run("In [+]");
+			run("In [+]");
+			run("In [+]");
+      	if (c==0) {
+        	Dialog.createNonBlocking("Title");("number of T cells");
+        	Dialog.addNumber("number of T cells", 1);
+      		Dialog.show();
+      		Tcellnumber = Dialog.getNumber();
+      		for (j = 0; j < Tcellnumber; j++) {
+        		selectWindow(nameprocessedvid+" #"+d);
+        		setTool(3);
+        		waitForUser("Draw ROI");
+        		roiManager("add");
+        		}
+        	selectWindow(nameprocessedvid+" #"+1);
+        	roiManager("deselect");
+    			roiManager("multi measure");
+          selectWindow("Results");
+        	File.makeDirectory(origin+File.separator+"Results");
+    			saveAs("Results", origin+File.separator+"Results"+File.separator+"video_"+i+"_tcell_"+340);
+					run("Clear Results");
+					selectWindow(nameprocessedvid+" #"+1);
+					close();
+					selectWindow(nameprocessedvid+" #"+3);
+          roiManager("multi measure");
+    			selectWindow("Results");
+					saveAs("Results", origin+File.separator+"Results"+File.separator+"video_"+i+"_tcell_"+380);
+					run("Clear Results");
+					selectWindow(nameprocessedvid+" #"+3);
+					close();
+					roiManager("deselect");
+          roiManager("delete");			
+        	}
+        else {
+          setTool(3);
+          waitForUser("Draw ROI Ramos");
+          roiManager("add");
+          roiManager("multi measure");
+          selectWindow("Results");
+          saveAs("Results", origin+File.separator+"Results"+File.separator+"video_"+i+"_Ramos");
+          run("Clear Results");
+          selectWindow(nameprocessedvid+" #"+d);
+          close();
+          roiManager("deselect");
+          roiManager("delete");	
+          }
+				}
+    selectWindow(nameprocessedvid);
+    close();
+	}
